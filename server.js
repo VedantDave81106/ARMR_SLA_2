@@ -10,17 +10,13 @@ const MIME_TYPES = {
   '.json': 'application/json',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
-  '.svg': 'image/svg+xml',
-  '.wav': 'audio/wav',
-  '.mp3': 'audio/mpeg'
+  '.svg': 'image/svg+xml'
 };
 
 const server = http.createServer((req, res) => {
   let reqPath = req.url.split('?')[0];
   if (reqPath === '/' || reqPath === '') {
-    reqPath = '/web_ar_filter/index.html';
-  } else if (!path.extname(reqPath)) {
-    reqPath = path.join(reqPath, 'index.html');
+    reqPath = '/index.html';
   }
 
   const filePath = path.join(__dirname, reqPath);
@@ -29,13 +25,8 @@ const server = http.createServer((req, res) => {
 
   fs.readFile(filePath, (err, content) => {
     if (err) {
-      if (err.code === 'ENOENT') {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end(`404 Not Found: ${reqPath}`);
-      } else {
-        res.writeHead(500, { 'Content-Type': 'text/plain' });
-        res.end(`500 Server Error: ${err.code}`);
-      }
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end(`404 Not Found: ${reqPath}`);
     } else {
       res.writeHead(200, { 'Content-Type': contentType });
       res.end(content, 'utf-8');
@@ -45,8 +36,7 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, () => {
   console.log(`================================================================`);
-  console.log(`ARMR Self Learning Assignment 2 - Live Server Running`);
-  console.log(`URL: http://localhost:${PORT}`);
-  console.log(`Student: Vedant Parimal Dave | SAP: 60017240057 | Roll: A011`);
+  console.log(`ARMR SLA 2 Server Running: http://localhost:${PORT}`);
+  console.log(`Vedant Parimal Dave | SAP: 60017240057 | Roll: A011 | Batch: A1-1`);
   console.log(`================================================================`);
 });

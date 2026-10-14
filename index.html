@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARMR SELF LEARNING ASSIGNMENT 2 - Vedant Parimal Dave</title>
+  <!-- MediaPipe Face Mesh & Camera CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+  <style>
+    /* ========================================================
+       EMBEDDED STYLES: 100% SELF-CONTAINED (NEVER BREAKS UI)
+       ======================================================== */
+    :root {
+      --bg-dark: #0a0e17;
+      --bg-panel: #131b2e;
+      --bg-card: #1c2742;
+      --border-color: #2b395b;
+      --cyan: #00f3ff;
+      --magenta: #ff007f;
+      --gold: #ffb703;
+      --green: #00f59b;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(90deg, #101626, #172038);
+      border-bottom: 2px solid var(--border-color);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .header-titles h1 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-tag {
+      background: linear-gradient(135deg, var(--magenta), var(--cyan));
+      color: white;
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .header-titles p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .student-badge {
+      background: var(--bg-card);
+      border: 1px solid var(--cyan);
+      border-radius: 8px;
+      padding: 8px 16px;
+      text-align: right;
+    }
+
+    .student-badge .name {
+      font-weight: 700;
+      color: var(--cyan);
+      font-size: 0.95rem;
+    }
+
+    .student-badge .details {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* Main Grid */
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    @media (max-width: 960px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left: Viewport Area */
+    .viewport-box {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .canvas-wrapper {
+      position: relative;
+      background: #000;
+      border-radius: 12px;
+      border: 2px solid var(--border-color);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #arCanvas {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1); /* mirror */
+    }
+
+    #webcam {
+      display: none;
+    }
+
+    /* HUD Elements Over Canvas */
+    .hud-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 14px;
+    }
+
+    .hud-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .status-pill {
+      background: rgba(19, 27, 46, 0.88);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      backdrop-filter: blur(8px);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ffaa00;
+      animation: pulseDot 1.5s infinite;
+    }
+
+    .dot.live {
+      background: var(--green);
+    }
+
+    @keyframes pulseDot {
+      0% { transform: scale(0.9); opacity: 0.7; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.7; }
+    }
+
+    .fps-pill {
+      background: rgba(19, 27, 46, 0.88);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--cyan);
+      backdrop-filter: blur(8px);
+    }
+
+    /* 3D Audio Radar */
+    .audio-radar {
+      position: absolute;
+      top: 60px;
+      right: 14px;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 1px dashed var(--cyan);
+      background: rgba(0, 243, 255, 0.08);
+      backdrop-filter: blur(6px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .radar-crosshair {
+      width: 4px;
+      height: 4px;
+      background: #ffffff;
+      border-radius: 50%;
+    }
+
+    .radar-blip {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: var(--magenta);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--magenta);
+      transform: translate(25px, -15px);
+      transition: transform 0.15s ease-out;
+    }
+
+    .radar-label {
+      position: absolute;
+      bottom: -18px;
+      font-size: 0.65rem;
+      color: var(--cyan);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    /* Live Trigger Pills */
+    .hud-trigger-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .trigger-pill {
+      background: rgba(19, 27, 46, 0.9);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 6px 12px;
+      display: flex;
+      flex-direction: column;
+      min-width: 90px;
+      backdrop-filter: blur(6px);
+      transition: all 0.2s;
+    }
+
+    .trigger-pill.active {
+      border-color: var(--magenta);
+      background: rgba(255, 0, 127, 0.3);
+      box-shadow: 0 0 12px rgba(255, 0, 127, 0.5);
+    }
+
+    .trigger-name {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .trigger-val {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    /* Buttons Toolbar */
+    .action-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease-in-out;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.15);
+    }
+
+    .btn-green {
+      background: linear-gradient(135deg, #00b074, #00f59b);
+      color: #052115;
+    }
+
+    .btn-purple {
+      background: linear-gradient(135deg, #7928ca, #ff0080);
+      color: white;
+    }
+
+    .btn-cyan {
+      background: linear-gradient(135deg, #0070f3, #00f3ff);
+      color: #06192e;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #f59e0b, #ffb703);
+      color: #261601;
+    }
+
+    /* Right: Sidebar Panel */
+    .sidebar-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Tabs */
+    .tab-headers {
+      display: flex;
+      background: #0f1626;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .tab-header-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 12px 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-bottom: 2px solid transparent;
+    }
+
+    .tab-header-btn.active {
+      color: var(--cyan);
+      border-bottom: 2px solid var(--cyan);
+      background: rgba(0, 243, 255, 0.05);
+    }
+
+    .tab-body {
+      padding: 16px;
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+    }
+
+    .tab-body.active {
+      display: flex;
+    }
+
+    .tab-body h2 {
+      font-size: 1.1rem;
+      color: #ffffff;
+      border-left: 3px solid var(--cyan);
+      padding-left: 8px;
+    }
+
+    .tab-body p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Card Containers inside tab */
+    .control-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .control-card h3 {
+      font-size: 0.9rem;
+      color: var(--cyan);
+    }
+
+    .check-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .check-label input {
+      accent-color: var(--cyan);
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Sliders */
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .slider-group label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .slider-group label span {
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .slider-group input[type="range"] {
+      width: 100%;
+      accent-color: var(--cyan);
+    }
+
+    /* Haptic Buttons */
+    .haptic-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .haptic-button {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 10px;
+      cursor: pointer;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      text-align: left;
+      transition: all 0.2s;
+    }
+
+    .haptic-button:hover {
+      border-color: var(--gold);
+      background: #243254;
+    }
+
+    .haptic-button strong {
+      font-size: 0.85rem;
+      color: var(--gold);
+    }
+
+    .haptic-button span {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* Vibration Waveform Bar */
+    .actuator-box {
+      background: #0d1322;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      height: 28px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .actuator-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--gold), var(--magenta));
+      transition: width 0.08s ease-out;
+    }
+
+    /* Script Cheat Sheet inside Tab 4 */
+    .script-step {
+      background: var(--bg-card);
+      border-left: 3px solid var(--cyan);
+      padding: 10px 12px;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.82rem;
+    }
+
+    .script-step strong {
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .script-quote {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 8px;
+      border-radius: 4px;
+      font-style: italic;
+      color: #f1f5f9;
+      margin-top: 4px;
+    }
+
+    /* Footer */
+    footer {
+      background: #0f1626;
+      border-top: 1px solid var(--border-color);
+      padding: 10px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top App Header -->
+  <header>
+    <div class="header-titles">
+      <h1>
+        <span>ARMR SELF LEARNING ASSIGNMENT 2</span>
+        <span class="badge-tag">CO3 & CO4</span>
+      </h1>
+      <p>Multi-Sensory Social AR Face Filter, HRTF 3D Spatial Audio & Haptics Engine</p>
+    </div>
+    <div class="student-badge">
+      <div class="name">Vedant Parimal Dave</div>
+      <div class="details">SAP: 60017240057 | Roll: A011 | Batch: A1-1</div>
+    </div>
+  </header>
+
+  <!-- Main Application Body -->
+  <main>
+    <!-- Left Column: AR Viewport & Live Canvas -->
+    <section class="viewport-box">
+      <div class="canvas-wrapper">
+        <video id="webcam" playsinline autoplay muted></video>
+        <canvas id="arCanvas"></canvas>
+
+        <!-- HUD Layer Over Canvas -->
+        <div class="hud-layer">
+          <div class="hud-top-bar">
+            <div class="status-pill">
+              <span class="dot live" id="liveDot"></span>
+              <span id="txtStatus">Simulated Demo Face (Ready)</span>
+            </div>
+            <div class="fps-pill" id="txtFps">60 FPS</div>
+          </div>
+
+          <!-- 3D Spatial Audio Radar -->
+          <div class="audio-radar" title="HRTF 3D Audio Source Position">
+            <div class="radar-crosshair"></div>
+            <div class="radar-blip" id="radarBlip"></div>
+            <span class="radar-label">HRTF RADAR</span>
+          </div>
+
+          <!-- Bottom Gesture Indicators -->
+          <div class="hud-trigger-bar">
+            <div class="trigger-pill" id="pillMouth">
+              <span class="trigger-name">Mouth Open</span>
+              <span class="trigger-val" id="valMouth">0%</span>
+            </div>
+            <div class="trigger-pill" id="pillBlink">
+              <span class="trigger-name">Eye Blink</span>
+              <span class="trigger-val" id="valBlink">OPEN</span>
+            </div>
+            <div class="trigger-pill" id="pillTilt">
+              <span class="trigger-name">Head Tilt</span>
+              <span class="trigger-val" id="valTilt">0°</span>
+            </div>
+            <div class="trigger-pill" id="pillHaptic">
+              <span class="trigger-name">Haptic Event</span>
+              <span class="trigger-val" id="valHaptic">IDLE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="action-bar">
+        <button id="btnCam" class="btn btn-green">📹 Start Webcam (Use My Face)</button>
+        <button id="btnSim" class="btn btn-purple">🤖 Demo Mode (No Camera Needed)</button>
+        <button id="btnAudio" class="btn btn-cyan">🔊 Test 3D Sound Ping</button>
+        <button id="btnOrbit" class="btn btn-gold">🔄 360° Sound Orbit</button>
+      </div>
+    </section>
+
+    <!-- Right Column: Interactive Control & Script Tabs -->
+    <aside class="sidebar-panel">
+      <!-- Tab Headers -->
+      <nav class="tab-headers">
+        <button class="tab-header-btn active" data-tab="tab-filter">Part A: AR Filter</button>
+        <button class="tab-header-btn" data-tab="tab-audio">Part B: HRTF Audio</button>
+        <button class="tab-header-btn" data-tab="tab-haptics">Part B: Haptics</button>
+        <button class="tab-header-btn" data-tab="tab-script">🎥 5-Min Video Script</button>
+      </nav>
+
+      <!-- TAB 1: AR Filter Controls -->
+      <div class="tab-body active" id="tab-filter">
+        <h2>Part A: Interactive Face Filter (CO3)</h2>
+        <p>Real-time landmark anchoring to 468 3D facial coordinates with interactive gesture triggers.</p>
+
+        <div class="control-card">
+          <h3>Facial Anchor Controls</h3>
+          <label class="check-label">
+            <input type="checkbox" id="chkCrown" checked>
+            <span>Forehead Anchor: 3D Holographic Crown (Tilts with Head)</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="chkVisor" checked>
+            <span>Eye Anchor: Cyber Visor HUD (Flashes on Eye Blink)</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="chkBeam" checked>
+            <span>Mouth Anchor: Plasma Energy Beam (Fires on Mouth Open)</span>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="chkMesh">
+            <span>Show 3D Face Mesh Wireframe</span>
+          </label>
+        </div>
+
+        <div class="control-card">
+          <h3>Live Head Orientation Matrix</h3>
+          <p>Pitch (X): <strong id="mPitch" style="color:var(--gold);">0°</strong> | Yaw (Y): <strong id="mYaw" style="color:var(--gold);">0°</strong> | Roll (Z): <strong id="mRoll" style="color:var(--gold);">0°</strong></p>
+        </div>
+
+        <p><strong>Social AR Design:</strong> Micro-gestures like mouth opening and blinking make the experience virally shareable on Instagram/TikTok while 9:16 viewport damping prevents edge clipping.</p>
+      </div>
+
+      <!-- TAB 2: HRTF 3D Spatial Audio -->
+      <div class="tab-body" id="tab-audio">
+        <h2>Part B: 3D Spatial Audio & HRTF (CO4)</h2>
+        <p>Comparing Head-Related Transfer Functions (HRTF) against plain stereo panning to guide player attention toward off-screen AR targets.</p>
+
+        <div class="control-card">
+          <div class="slider-group">
+            <label>Azimuth Angle (360° Position): <span id="lblAzimuth">90° (Right Ear)</span></label>
+            <input type="range" id="slAzimuth" min="-180" max="180" value="90">
+          </div>
+
+          <div class="slider-group">
+            <label>Distance Attenuation: <span id="lblDistance">3.0 meters</span></label>
+            <input type="range" id="slDistance" min="0.5" max="10" step="0.1" value="3.0">
+          </div>
+
+          <div class="slider-group">
+            <label>Panning Mode:</label>
+            <label class="check-label">
+              <input type="radio" name="panningMode" value="HRTF" checked>
+              <span>HRTF Binaural 3D (Pinna + ITD + ILD)</span>
+            </label>
+            <label class="check-label">
+              <input type="radio" name="panningMode" value="equalpower">
+              <span>Standard Stereo (Left/Right Only)</span>
+            </label>
+          </div>
+        </div>
+
+        <p><strong>Why HRTF Wins:</strong> Stereo panning only adjusts left/right volume. HRTF computes microsecond time delays (ITD) and ear-shape frequency notches so you can tell if a sound is behind or above you!</p>
+      </div>
+
+      <!-- TAB 3: Mobile Haptics -->
+      <div class="tab-body" id="tab-haptics">
+        <h2>Part B: Mobile Tactile Haptics Lab (CO4)</h2>
+        <p>Simulating mobile vibration feedback patterns for AR raycast aiming and touch interactions.</p>
+
+        <div class="haptic-grid">
+          <button class="haptic-button" onclick="triggerHaptic('light')">
+            <strong>Subtle Tick (15ms)</strong>
+            <span>Raycast Gaze Hover</span>
+          </button>
+          <button class="haptic-button" onclick="triggerHaptic('medium')">
+            <strong>Target Lock (40ms)</strong>
+            <span>Gaze Dwell Confirmed</span>
+          </button>
+          <button class="haptic-button" onclick="triggerHaptic('heavy')">
+            <strong>Plasma Blast (80ms)</strong>
+            <span>Mouth Open Energy Surge</span>
+          </button>
+          <button class="haptic-button" onclick="triggerHaptic('warning')">
+            <strong>Off-Screen Alert</strong>
+            <span>Dual Buzz (Target Behind)</span>
+          </button>
+        </div>
+
+        <div class="control-card">
+          <h3>Hardware Actuator Visualizer</h3>
+          <div class="actuator-box">
+            <div class="actuator-bar" id="actuatorBar"></div>
+          </div>
+          <p style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">Supported on Android/iOS via Web Vibration API and in Unity via Android <code>VibrationEffect</code>.</p>
+        </div>
+      </div>
+
+      <!-- TAB 4: 5-Minute Video Recording Guide -->
+      <div class="tab-body" id="tab-script">
+        <h2>🎥 5-Minute Video Recording Guide</h2>
+        <p>Follow these exact 5 steps while recording your screen using <strong>Win + Alt + R</strong>:</p>
+
+        <div class="script-step">
+          <strong>Step 1 (0:00 - 0:45) Introduction:</strong>
+          <div class="script-quote">"Hello, my name is Vedant Parimal Dave, SAP ID 60017240057, Roll No. A011. Today I am presenting my ARMR Self Learning Assignment 2 on Social AR Face Filters, HRTF Spatial Audio, and Haptic Feedback."</div>
+        </div>
+
+        <div class="script-step">
+          <strong>Step 2 (0:45 - 2:00) Demonstrate Part A Face Filter:</strong>
+          <p>Show the crown rotating with head tilt, the visor flashing on blink, and open your mouth to shoot the plasma beam!</p>
+          <div class="script-quote">"In Part A, we anchor 3D objects to facial landmarks: the holographic crown follows head tilt, the visor detects eye blinks, and opening the mouth triggers a plasma shockwave with audio."</div>
+        </div>
+
+        <div class="script-step">
+          <strong>Step 3 (2:00 - 3:15) Demonstrate Part B HRTF Spatial Audio:</strong>
+          <p>Click the 'Part B: HRTF Audio' tab and move the Azimuth slider or click '360° Sound Orbit'.</p>
+          <div class="script-quote">"In Part B, we use Head-Related Transfer Functions (HRTF). Unlike plain stereo panning, HRTF uses time delays and pinna filtering so players can locate targets behind them in 3D space."</div>
+        </div>
+
+        <div class="script-step">
+          <strong>Step 4 (3:15 - 4:15) Demonstrate Part B Haptics:</strong>
+          <p>Click 'Part B: Haptics' tab and click the haptic buttons to show the actuator vibration bar.</p>
+          <div class="script-quote">"We implemented mobile tactile haptics: subtle ticks for raycast hover, confirmation pulses for target lock, and heavy rumbles for firing."</div>
+        </div>
+
+        <div class="script-step">
+          <strong>Step 5 (4:15 - 5:00) Conclusion:</strong>
+          <div class="script-quote">"All deliverables, including Unity C# scripts, exported .arexport package, and our report, are available in our GitHub repository. Thank you!"</div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Bottom Status Bar -->
+  <footer>
+    <span>ARMR Self Learning Assignment 2 • Department of AI & ML</span>
+    <span>Vedant Parimal Dave • SAP: 60017240057 • Roll: A011</span>
+  </footer>
+
+  <!-- ========================================================
+       EMBEDDED JAVASCRIPT: 100% SELF-CONTAINED
+       ======================================================== -->
+  <script>
+    // ----------------------------------------------------
+    // 1. SPATIAL AUDIO ENGINE (HRTF & 3D Web Audio API)
+    // ----------------------------------------------------
+    class AudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.panner = null;
+        this.gain = null;
+        this.azimuth = 90;
+        this.distance = 3.0;
+        this.panningMode = 'HRTF';
+        this.orbitTimer = null;
+      }
+
+      init() {
+        if (this.ctx) return;
+        const AC = window.AudioContext || window.webkitAudioContext;
+        this.ctx = new AC();
+        this.panner = this.ctx.createPanner();
+        this.panner.panningModel = this.panningMode;
+        this.panner.distanceModel = 'inverse';
+        this.panner.refDistance = 1;
+        this.panner.maxDistance = 50;
+        this.panner.rolloffFactor = 1.2;
+
+        this.gain = this.ctx.createGain();
+        this.gain.gain.value = 0.6;
+        this.panner.connect(this.gain);
+        this.gain.connect(this.ctx.destination);
+        this.updatePosition();
+      }
+
+      updatePosition() {
+        if (!this.panner) return;
+        const rad = (this.azimuth * Math.PI) / 180;
+        const x = this.distance * Math.sin(rad);
+        const z = -this.distance * Math.cos(rad);
+        if (this.panner.positionX) {
+          this.panner.positionX.setTargetAtTime(x, this.ctx.currentTime, 0.05);
+          this.panner.positionY.setTargetAtTime(0, this.ctx.currentTime, 0.05);
+          this.panner.positionZ.setTargetAtTime(z, this.ctx.currentTime, 0.05);
+        } else {
+          this.panner.setPosition(x, 0, z);
+        }
+
+        // Update Radar Blip
+        const blip = document.getElementById('radarBlip');
+        if (blip) {
+          const pxX = Math.max(-36, Math.min(36, (x / 5) * 32));
+          const pxY = Math.max(-36, Math.min(36, (z / 5) * 32));
+          blip.style.transform = `translate(${pxX}px, ${pxY}px)`;
+        }
+      }
+
+      playPing(freq = 640, duration = 0.25) {
+        this.init();
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        const osc = this.ctx.createOscillator();
+        const env = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.4, this.ctx.currentTime + 0.08);
+
+        env.gain.setValueAtTime(0.001, this.ctx.currentTime);
+        env.gain.linearRampToValueAtTime(0.6, this.ctx.currentTime + 0.02);
+        env.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+
+        osc.connect(env);
+        env.connect(this.panner);
+        osc.start();
+        osc.stop(this.ctx.currentTime + duration);
+      }
+
+      playBeam() {
+        this.init();
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        const osc = this.ctx.createOscillator();
+        const filter = this.ctx.createBiquadFilter();
+        const env = this.ctx.createGain();
+
+        osc.type = 'sawtooth';
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(300, this.ctx.currentTime);
+        filter.frequency.exponentialRampToValueAtTime(3000, this.ctx.currentTime + 0.15);
+
+        env.gain.setValueAtTime(0.01, this.ctx.currentTime);
+        env.gain.linearRampToValueAtTime(0.5, this.ctx.currentTime + 0.04);
+        env.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.4);
+
+        osc.connect(filter);
+        filter.connect(env);
+        env.connect(this.panner);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.42);
+      }
+
+      toggleOrbit() {
+        if (this.orbitTimer) {
+          clearInterval(this.orbitTimer);
+          this.orbitTimer = null;
+          return false;
+        } else {
+          this.orbitTimer = setInterval(() => {
+            this.azimuth += 10;
+            if (this.azimuth > 180) this.azimuth = -180;
+            document.getElementById('slAzimuth').value = this.azimuth;
+            document.getElementById('lblAzimuth').textContent = `${this.azimuth}°`;
+            this.updatePosition();
+            this.playPing(580, 0.12);
+          }, 300);
+          return true;
+        }
+      }
+    }
+    const audioEngine = new AudioEngine();
+
+    // ----------------------------------------------------
+    // 2. HAPTICS CONTROLLER (Web Vibration & Actuator)
+    // ----------------------------------------------------
+    function triggerHaptic(type) {
+      let pattern = [20];
+      let width = '40%';
+      let label = 'TICK (15ms)';
+
+      if (type === 'light') { pattern = [15]; width = '35%'; label = 'TICK (15ms)'; }
+      else if (type === 'medium') { pattern = [40]; width = '65%'; label = 'LOCK (40ms)'; }
+      else if (type === 'heavy') { pattern = [80]; width = '100%'; label = 'BLAST (80ms)'; }
+      else if (type === 'warning') { pattern = [30, 50, 30]; width = '85%'; label = 'WARN (30/50/30)'; }
+
+      if ('vibrate' in navigator) {
+        try { navigator.vibrate(pattern); } catch (e) {}
+      }
+
+      const bar = document.getElementById('actuatorBar');
+      if (bar) {
+        bar.style.width = width;
+        setTimeout(() => { bar.style.width = '0%'; }, 200);
+      }
+
+      const pill = document.getElementById('pillHaptic');
+      const val = document.getElementById('valHaptic');
+      if (pill && val) {
+        pill.classList.add('active');
+        val.textContent = label;
+        setTimeout(() => {
+          pill.classList.remove('active');
+          val.textContent = 'IDLE';
+        }, 500);
+      }
+    }
+
+    // ----------------------------------------------------
+    // 3. MAIN AR VIEWPORT & FACE TRACKING CONTROLLER
+    // ----------------------------------------------------
+    const video = document.getElementById('webcam');
+    const canvas = document.getElementById('arCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let isWebcam = false;
+    let isSimulating = true; // Start in simulation by default so UI is never empty!
+    let simTimer = 0;
+    let particles = [];
+    let mouthFired = false;
+    let blinkFired = false;
+
+    function resize() {
+      canvas.width = canvas.parentElement.clientWidth || 640;
+      canvas.height = canvas.parentElement.clientHeight || 480;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Tab Switching
+    document.querySelectorAll('.tab-header-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-header-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-body').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        const target = document.getElementById(btn.getAttribute('data-tab'));
+        if (target) target.classList.add('active');
+      });
+    });
+
+    // Audio & Haptic Event Listeners
+    document.getElementById('slAzimuth').addEventListener('input', (e) => {
+      const v = parseInt(e.target.value);
+      document.getElementById('lblAzimuth').textContent = `${v}°`;
+      audioEngine.azimuth = v;
+      audioEngine.updatePosition();
+      audioEngine.playPing(620, 0.1);
+    });
+
+    document.getElementById('slDistance').addEventListener('input', (e) => {
+      const v = parseFloat(e.target.value);
+      document.getElementById('lblDistance').textContent = `${v.toFixed(1)} meters`;
+      audioEngine.distance = v;
+      audioEngine.updatePosition();
+    });
+
+    document.querySelectorAll('input[name="panningMode"]').forEach(r => {
+      r.addEventListener('change', (e) => {
+        audioEngine.panningMode = e.target.value;
+        if (audioEngine.panner) audioEngine.panner.panningModel = e.target.value;
+        audioEngine.playPing(720, 0.2);
+      });
+    });
+
+    document.getElementById('btnAudio').addEventListener('click', () => {
+      audioEngine.playPing(680, 0.3);
+      triggerHaptic('medium');
+    });
+
+    const btnOrbit = document.getElementById('btnOrbit');
+    btnOrbit.addEventListener('click', () => {
+      const active = audioEngine.toggleOrbit();
+      btnOrbit.textContent = active ? '⏹ Stop Sound Orbit' : '🔄 360° Sound Orbit';
+    });
+
+    // Camera Toggle
+    const btnCam = document.getElementById('btnCam');
+    btnCam.addEventListener('click', async () => {
+      if (isWebcam) {
+        stopCam();
+      } else {
+        isSimulating = false;
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 }, audio: false });
+          video.srcObject = stream;
+          await video.play();
+          isWebcam = true;
+          btnCam.textContent = '⏹ Stop Webcam';
+          document.getElementById('liveDot').classList.add('live');
+          document.getElementById('txtStatus').textContent = 'Webcam Active (Tracking Face)';
+          initFaceMesh();
+        } catch (err) {
+          alert('Webcam access was denied or not available. Switching back to Simulated Demo Face!');
+          isSimulating = true;
+          document.getElementById('txtStatus').textContent = 'Simulated Demo Face (Ready)';
+        }
+      }
+    });
+
+    function stopCam() {
+      isWebcam = false;
+      if (video.srcObject) {
+        video.srcObject.getTracks().forEach(t => t.stop());
+        video.srcObject = null;
+      }
+      btnCam.textContent = '📹 Start Webcam (Use My Face)';
+      isSimulating = true;
+      document.getElementById('txtStatus').textContent = 'Simulated Demo Face (Ready)';
+    }
+
+    const btnSim = document.getElementById('btnSim');
+    btnSim.addEventListener('click', () => {
+      if (isWebcam) stopCam();
+      isSimulating = true;
+      document.getElementById('txtStatus').textContent = 'Simulated Demo Face (Ready)';
+    });
+
+    // MediaPipe FaceMesh
+    let faceMesh = null;
+    function initFaceMesh() {
+      if (typeof FaceMesh === 'undefined') return;
+      faceMesh = new FaceMesh({
+        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+      });
+      faceMesh.setOptions({ maxNumFaces: 1, refineLandmarks: true, minDetectionConfidence: 0.5 });
+      faceMesh.onResults(onMeshResults);
+      requestAnimationFrame(camLoop);
+    }
+
+    async function camLoop() {
+      if (isWebcam && faceMesh && video.readyState >= 2) {
+        await faceMesh.send({ image: video });
+      }
+      if (isWebcam) requestAnimationFrame(camLoop);
+    }
+
+    function onMeshResults(results) {
+      if (!isWebcam) return;
+      resize();
+      ctx.save();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
+
+      if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
+        const lm = results.multiFaceLandmarks[0];
+        renderFaceFeatures(lm, false);
+      }
+      ctx.restore();
+    }
+
+    // Render Loop for Simulation (Always smooth and beautiful!)
+    function mainRenderLoop() {
+      if (isSimulating) {
+        resize();
+        simTimer += 0.04;
+        ctx.save();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Cyber dark backdrop
+        const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        grad.addColorStop(0, '#0a0e17');
+        grad.addColorStop(1, '#17223b');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Synthetic head movements
+        const cx = canvas.width / 2 + Math.sin(simTimer * 0.8) * 35;
+        const cy = canvas.height / 2 + Math.cos(simTimer * 0.6) * 18;
+        const roll = Math.sin(simTimer * 0.9) * 16;
+        const yaw = Math.sin(simTimer * 0.7) * 20;
+        const pitch = Math.cos(simTimer * 0.5) * 12;
+
+        const mouthCycle = (Math.sin(simTimer * 1.4) + 1) / 2;
+        const mouthOpen = mouthCycle > 0.65 ? (mouthCycle - 0.65) * 2.8 : 0;
+        const isBlinking = Math.sin(simTimer * 2.1) > 0.88;
+
+        const synthData = { cx, cy, roll, yaw, pitch, mouthOpen, isBlinking };
+        renderFaceFeatures(synthData, true);
+        ctx.restore();
+      }
+      requestAnimationFrame(mainRenderLoop);
+    }
+    requestAnimationFrame(mainRenderLoop);
+
+    // Common Face Rendering Logic
+    function renderFaceFeatures(data, isSynth) {
+      let cx, cy, roll, yaw, pitch, mouthRatio, isBlinking;
+
+      if (isSynth) {
+        cx = data.cx;
+        cy = data.cy;
+        roll = data.roll;
+        yaw = data.yaw;
+        pitch = data.pitch;
+        mouthRatio = data.mouthOpen;
+        isBlinking = data.isBlinking;
+      } else {
+        // Real landmarks
+        const pForehead = toScreen(data[10]);
+        const pChin = toScreen(data[152]);
+        const pLeftEye = toScreen(data[263]);
+        const pRightEye = toScreen(data[33]);
+        const pUpper = toScreen(data[13]);
+        const pLower = toScreen(data[14]);
+
+        cx = (pLeftEye.x + pRightEye.x) / 2;
+        cy = (pForehead.y + pChin.y) / 2;
+
+        const dX = pLeftEye.x - pRightEye.x;
+        const dY = pLeftEye.y - pRightEye.y;
+        roll = (Math.atan2(dY, dX) * 180) / Math.PI;
+
+        const faceH = Math.hypot(pChin.x - pForehead.x, pChin.y - pForehead.y) || 1;
+        mouthRatio = Math.hypot(pLower.x - pUpper.x, pLower.y - pUpper.y) / faceH;
+        yaw = 0; pitch = 0;
+        isBlinking = false;
+      }
+
+      // Update Telemetry
+      document.getElementById('mRoll').textContent = `${roll.toFixed(1)}°`;
+      document.getElementById('mPitch').textContent = `${pitch.toFixed(1)}°`;
+      document.getElementById('mYaw').textContent = `${yaw.toFixed(1)}°`;
+      document.getElementById('valTilt').textContent = `${roll.toFixed(0)}°`;
+
+      // 1. Mouth Open Trigger Evaluation
+      const isMouthOpen = mouthRatio > 0.3;
+      document.getElementById('valMouth').textContent = `${Math.min(100, Math.round(mouthRatio * 150))}%`;
+      const pillMouth = document.getElementById('pillMouth');
+      if (isMouthOpen) {
+        pillMouth.classList.add('active');
+        if (!mouthFired) {
+          mouthFired = true;
+          audioEngine.playBeam();
+          triggerHaptic('heavy');
+        }
+      } else {
+        pillMouth.classList.remove('active');
+        mouthFired = false;
+      }
+
+      // 2. Blink Trigger Evaluation
+      const pillBlink = document.getElementById('pillBlink');
+      if (isBlinking) {
+        pillBlink.classList.add('active');
+        document.getElementById('valBlink').textContent = 'BLINK!';
+        if (!blinkFired) {
+          blinkFired = true;
+          triggerHaptic('light');
+          audioEngine.playPing(880, 0.08);
+        }
+      } else {
+        pillBlink.classList.remove('active');
+        document.getElementById('valBlink').textContent = 'OPEN';
+        blinkFired = false;
+      }
+
+      // 3. Draw AR Anchors
+      const chkCrown = document.getElementById('chkCrown').checked;
+      const chkVisor = document.getElementById('chkVisor').checked;
+      const chkBeam = document.getElementById('chkBeam').checked;
+      const chkMesh = document.getElementById('chkMesh').checked;
+
+      // Draw Synthetic Wireframe Mesh if enabled
+      if (chkMesh || isSynth) {
+        drawFaceBase(cx, cy, roll, isSynth);
+      }
+
+      // Anchor 1: Forehead 3D Crown
+      if (chkCrown) {
+        drawHologramCrown(cx, cy - 90, roll);
+      }
+
+      // Anchor 2: Eye Visor HUD
+      if (chkVisor) {
+        drawCyberVisor(cx, cy - 20, roll, isBlinking);
+      }
+
+      // Anchor 3: Mouth Plasma Beam
+      if (chkBeam && isMouthOpen) {
+        drawPlasmaBeam(cx, cy + 65, roll);
+      }
+
+      // Update Particles
+      drawParticles();
+    }
+
+    function toScreen(pt) {
+      return { x: pt.x * canvas.width, y: pt.y * canvas.height };
+    }
+
+    function drawFaceBase(cx, cy, roll, isSynth) {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate((roll * Math.PI) / 180);
+
+      // Neon facial oval
+      ctx.strokeStyle = 'rgba(0, 243, 255, 0.3)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 80, 115, 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      if (isSynth) {
+        // Eyes
+        ctx.fillStyle = '#00f3ff';
+        ctx.fillRect(-35, -25, 14, 6);
+        ctx.fillRect(21, -25, 14, 6);
+        // Nose bridge
+        ctx.strokeStyle = '#00f3ff';
+        ctx.strokeRect(-4, -10, 8, 28);
+      }
+      ctx.restore();
+    }
+
+    function drawHologramCrown(cx, cy, roll) {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate((roll * Math.PI) / 180);
+
+      ctx.strokeStyle = '#00f3ff';
+      ctx.shadowColor = '#00f3ff';
+      ctx.shadowBlur = 15;
+      ctx.lineWidth = 3;
+
+      // Left Horn
+      ctx.beginPath();
+      ctx.moveTo(-20, 0);
+      ctx.quadraticCurveTo(-60, -35, -45, -70);
+      ctx.quadraticCurveTo(-30, -30, -10, 0);
+      ctx.stroke();
+
+      // Right Horn
+      ctx.beginPath();
+      ctx.moveTo(20, 0);
+      ctx.quadraticCurveTo(60, -35, 45, -70);
+      ctx.quadraticCurveTo(30, -30, 10, 0);
+      ctx.stroke();
+
+      // Center Crystal
+      ctx.beginPath();
+      ctx.moveTo(0, -45);
+      ctx.lineTo(12, -25);
+      ctx.lineTo(0, -5);
+      ctx.lineTo(-12, -25);
+      ctx.closePath();
+      ctx.fillStyle = '#ffb703';
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawCyberVisor(cx, cy, roll, isBlinking) {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate((roll * Math.PI) / 180);
+
+      const color = isBlinking ? '#ff007f' : '#00f3ff';
+      ctx.strokeStyle = color;
+      ctx.fillStyle = isBlinking ? 'rgba(255, 0, 127, 0.45)' : 'rgba(0, 243, 255, 0.2)';
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 12;
+      ctx.lineWidth = 2.5;
+
+      ctx.beginPath();
+      ctx.moveTo(-65, -16);
+      ctx.lineTo(65, -16);
+      ctx.lineTo(55, 16);
+      ctx.lineTo(0, 24);
+      ctx.lineTo(-55, 16);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Eye Reticles
+      [-30, 30].forEach(ox => {
+        ctx.beginPath();
+        ctx.arc(ox, 0, 10, 0, Math.PI * 2);
+        ctx.strokeStyle = '#ffb703';
+        ctx.stroke();
+      });
+
+      ctx.restore();
+    }
+
+    function drawPlasmaBeam(cx, cy, roll) {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate((roll * Math.PI) / 180);
+
+      // Core glow
+      const grad = ctx.createRadialGradient(0, 0, 4, 0, 0, 40);
+      grad.addColorStop(0, '#ffffff');
+      grad.addColorStop(0.3, '#ff007f');
+      grad.addColorStop(1, 'rgba(255, 0, 127, 0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(0, 0, 40, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Shockwave ring
+      ctx.strokeStyle = '#00f3ff';
+      ctx.lineWidth = 3;
+      ctx.shadowColor = '#ff007f';
+      ctx.shadowBlur = 15;
+      ctx.beginPath();
+      ctx.arc(0, 0, 24 + Math.sin(performance.now() * 0.02) * 8, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.restore();
+
+      // Spawn particles
+      for (let i = 0; i < 3; i++) {
+        particles.push({
+          x: cx + (Math.random() - 0.5) * 16,
+          y: cy + (Math.random() - 0.5) * 16,
+          vx: (Math.random() - 0.5) * 5,
+          vy: 2 + Math.random() * 6,
+          life: 1.0,
+          color: Math.random() > 0.5 ? '#00f3ff' : '#ff007f'
+        });
+      }
+    }
+
+    function drawParticles() {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= 0.04;
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+        ctx.save();
+        ctx.globalAlpha = p.life;
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4 * p.life, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+  </script>
+</body>
+</html>

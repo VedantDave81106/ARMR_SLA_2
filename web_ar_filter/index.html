@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARMR Interactive Social AR Filter & Spatial Audio / Haptics Lab</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- MediaPipe Face Mesh & Camera Utils -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header Navigation -->
+    <header class="app-header">
+      <div class="header-left">
+        <span class="badge">ARMR SLA 2</span>
+        <h1>Multi-Sensory Social AR & Spatial Systems Lab</h1>
+      </div>
+      <div class="student-pill">
+        <span><strong>Vedant Parimal Dave</strong> (Roll: A011 | SAP: 60017240057 | Batch: A1-1)</span>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="main-content">
+      <!-- AR Viewport Section -->
+      <section class="viewport-section">
+        <div class="camera-container" id="cameraContainer">
+          <!-- Raw Video Feed (Hidden or Mirrored) -->
+          <video id="webcam" playsinline autoplay muted></video>
+          <!-- AR Overlay Canvas -->
+          <canvas id="arCanvas"></canvas>
+
+          <!-- Viewport HUD Overlay -->
+          <div class="hud-overlay">
+            <div class="hud-top">
+              <div class="status-indicator">
+                <span class="dot" id="trackingDot"></span>
+                <span id="trackingStatus">Initializing Engine...</span>
+              </div>
+              <div class="fps-counter" id="fpsDisplay">FPS: --</div>
+            </div>
+
+            <!-- Off-screen Audio Target Radar Indicator -->
+            <div class="target-radar" id="targetRadar" title="3D Spatial Audio Off-Screen Target Indicator">
+              <div class="radar-center"></div>
+              <div class="radar-sweep"></div>
+              <div class="radar-blip" id="radarBlip"></div>
+              <span class="radar-label">SPATIAL RADAR</span>
+            </div>
+
+            <!-- Face Action Detection HUD Pills -->
+            <div class="hud-bottom-actions">
+              <div class="action-pill" id="pillMouth">
+                <span class="action-name">MOUTH OPEN</span>
+                <span class="action-val" id="valMouth">0%</span>
+              </div>
+              <div class="action-pill" id="pillBlink">
+                <span class="action-name">EYE BLINK</span>
+                <span class="action-val" id="valBlink">OPEN</span>
+              </div>
+              <div class="action-pill" id="pillTilt">
+                <span class="action-name">HEAD TILT</span>
+                <span class="action-val" id="valTilt">0°</span>
+              </div>
+              <div class="action-pill" id="pillHaptic">
+                <span class="action-name">HAPTIC PULSE</span>
+                <span class="action-val" id="valHaptic">IDLE</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls Toolbar -->
+        <div class="controls-toolbar">
+          <button id="btnToggleCam" class="btn btn-primary">Start Webcam</button>
+          <button id="btnSimulateFace" class="btn btn-secondary">Simulated Face Demo</button>
+          <button id="btnSwitchEffect" class="btn btn-accent">Cycle AR Theme</button>
+          <button id="btnTriggerAudio" class="btn btn-audio">Test Spatial Ping (HRTF)</button>
+        </div>
+      </section>
+
+      <!-- Interactive Inspector & Architectural Panel -->
+      <aside class="sidebar-section">
+        <!-- Tabs for Switching Views -->
+        <div class="tabs-nav">
+          <button class="tab-btn active" data-tab="tab-filter">Part A: AR Filter</button>
+          <button class="tab-btn" data-tab="tab-spatial">Part B: HRTF Audio</button>
+          <button class="tab-btn" data-tab="tab-haptics">Part B: Haptics Lab</button>
+        </div>
+
+        <!-- Tab 1: AR Filter Controls & Analysis -->
+        <div class="tab-content active" id="tab-filter">
+          <h3>Part A — Interactive Face Tracking</h3>
+          <p class="section-desc">Real-time landmark anchoring to 468 3D facial coordinates.</p>
+
+          <div class="feature-group">
+            <label class="toggle-control">
+              <input type="checkbox" id="chkCyberVisor" checked>
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">Cybernetic Visor (Eye Tracking Anchor)</span>
+            </label>
+            <label class="toggle-control">
+              <input type="checkbox" id="chkCrown" checked>
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">Holographic Horns / Crown (Forehead Anchor)</span>
+            </label>
+            <label class="toggle-control">
+              <input type="checkbox" id="chkMouthBeam" checked>
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">Plasma Beam on Mouth Open</span>
+            </label>
+            <label class="toggle-control">
+              <input type="checkbox" id="chkFaceMesh">
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">Show 3D Face Mesh Wireframe</span>
+            </label>
+          </div>
+
+          <div class="metric-card">
+            <h4>Live Orientation Matrix</h4>
+            <div class="metric-row"><span>Pitch (X-axis):</span><span id="metricPitch">0.0°</span></div>
+            <div class="metric-row"><span>Yaw (Y-axis):</span><span id="metricYaw">0.0°</span></div>
+            <div class="metric-row"><span>Roll (Z-axis):</span><span id="metricRoll">0.0°</span></div>
+          </div>
+
+          <div class="info-box">
+            <strong>Social Interaction Design Pattern:</strong>
+            <p>Triggers encourage active social sharing: wide mouth opening fires an energy burst, blinking triggers laser flashes, and head tilts rotate the 3D augmented crown.</p>
+          </div>
+        </div>
+
+        <!-- Tab 2: Spatial Audio Architecture -->
+        <div class="tab-content" id="tab-spatial">
+          <h3>Part B — HRTF Spatial Audio</h3>
+          <p class="section-desc">Comparing Head-Related Transfer Functions (HRTF) against simple stereo panning.</p>
+
+          <div class="audio-control-card">
+            <h4>Sound Source 3D Position</h4>
+            <label>Azimuth Angle (Horizontal 360°): <span id="lblAzimuth">90° (Right)</span></label>
+            <input type="range" id="rngAzimuth" min="-180" max="180" value="90">
+
+            <label>Distance from Player (Attenuation): <span id="lblDistance">3.0 m</span></label>
+            <input type="range" id="rngDistance" min="0.5" max="10" step="0.1" value="3.0">
+
+            <label>Panning Mode:</label>
+            <div class="radio-group">
+              <label><input type="radio" name="panningMode" value="HRTF" checked> HRTF (Binaural 3D)</label>
+              <label><input type="radio" name="panningMode" value="equalpower"> Standard Stereo (Equal Power)</label>
+            </div>
+
+            <button id="btnOrbitSound" class="btn btn-secondary btn-full">Toggle 360° Sound Orbit</button>
+          </div>
+
+          <div class="info-box">
+            <strong>Off-Screen Guidance Mechanic:</strong>
+            <p>HRTF simulates pinna filtering, Interaural Time Difference (ITD), and Interaural Level Difference (ILD) to guide the user's attention to targets located behind or outside the camera viewport.</p>
+          </div>
+        </div>
+
+        <!-- Tab 3: Haptic Feedback Architecture -->
+        <div class="tab-content" id="tab-haptics">
+          <h3>Part B — Tactile Haptics Lab</h3>
+          <p class="section-desc">Mobile tactile vibration feedback engine for raycasts and UI events.</p>
+
+          <div class="haptic-grid">
+            <button class="haptic-btn" data-pattern="light">
+              <strong>Subtle Tick</strong>
+              <span>UI Hover / Raycast Hit (15ms)</span>
+            </button>
+            <button class="haptic-btn" data-pattern="medium">
+              <strong>Confirmation Pulse</strong>
+              <span>Target Locked (40ms)</span>
+            </button>
+            <button class="haptic-btn" data-pattern="heavy">
+              <strong>Impact Pulse</strong>
+              <span>Mouth Beam Release (80ms)</span>
+            </button>
+            <button class="haptic-btn" data-pattern="warning">
+              <strong>Warning Waveform</strong>
+              <span>Target Behind (Double Buzz)</span>
+            </button>
+          </div>
+
+          <div class="waveform-visualizer">
+            <h4>Haptic Actuator Response Visualizer</h4>
+            <div class="vibration-bar-container">
+              <div class="vibration-bar" id="vibrationBar"></div>
+            </div>
+            <p class="note">Supported on Android/iOS browsers via Web Vibration API.</p>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Footer Status -->
+    <footer class="app-footer">
+      <span>Self-Learning Assignment 2 • ARMR DJS23ALH1501</span>
+      <span>CO3: Social AR Experience | CO4: Spatial Audio & Haptics</span>
+    </footer>
+  </div>
+
+  <script src="spatial_audio_demo.js"></script>
+  <script src="haptics_demo.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

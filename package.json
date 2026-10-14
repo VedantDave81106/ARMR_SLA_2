@@ -1,0 +1,11 @@
+{
+  "name": "armr-self-learning-assignment-2",
+  "version": "1.0.0",
+  "description": "Spatial Audio Integration, Haptic Feedback & Social AR Interactive Filter Design - ARMR SLA 2",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Vedant Parimal Dave (SAP ID: 60017240057, Roll: A011, Batch: A1-1)",
+  "license": "MIT"
+}

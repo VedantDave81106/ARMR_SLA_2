@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARMR SELF LEARNING ASSIGNMENT  2 - Vedant Parimal Dave</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      --primary: #0f172a;
+      --secondary: #2563eb;
+      --accent: #0284c7;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --card-bg: #f8fafc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background-color: #ffffff;
+      line-height: 1.6;
+      padding: 40px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Print styling for perfect PDF generation */
+    @media print {
+      body {
+        padding: 0;
+        font-size: 11pt;
+        line-height: 1.45;
+        max-width: 100%;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      .no-print {
+        display: none !important;
+      }
+      a {
+        text-decoration: none;
+        color: var(--text);
+      }
+    }
+
+    header.report-header {
+      border-bottom: 2px solid var(--secondary);
+      padding-bottom: 20px;
+      margin-bottom: 25px;
+    }
+
+    .report-title {
+      font-size: 26pt;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--primary);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .meta-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      font-size: 10.5pt;
+    }
+
+    .meta-item strong {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    h2 {
+      font-size: 16pt;
+      font-weight: 700;
+      color: var(--primary);
+      margin-top: 28px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h3 {
+      font-size: 12.5pt;
+      font-weight: 600;
+      color: var(--secondary);
+      margin-top: 18px;
+      margin-bottom: 8px;
+    }
+
+    p {
+      margin-bottom: 12px;
+      font-size: 10pt;
+      color: #334155;
+      text-align: justify;
+    }
+
+    ul, ol {
+      margin-left: 20px;
+      margin-bottom: 14px;
+      font-size: 10pt;
+      color: #334155;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 8pt;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--secondary);
+      color: white;
+      text-transform: uppercase;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 9.5pt;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: var(--card-bg);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fdfdfe;
+    }
+
+    .formula-box {
+      background-color: var(--card-bg);
+      border-left: 4px solid var(--secondary);
+      padding: 12px 18px;
+      border-radius: 0 6px 6px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5pt;
+      margin: 14px 0;
+      color: #0f172a;
+    }
+
+    .code-snippet {
+      background-color: #1e293b;
+      color: #e2e8f0;
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8.5pt;
+      overflow-x: auto;
+      margin: 12px 0;
+    }
+
+    .print-bar {
+      position: sticky;
+      top: 10px;
+      background: #0284c7;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+    }
+
+    .print-btn {
+      background: white;
+      color: #0284c7;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="print-bar no-print">
+    <span>Ready to export as PDF: Press <strong>Ctrl + P</strong> (or click Print) and select <em>"Save as PDF"</em>.</span>
+    <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+  </div>
+
+  <header class="report-header">
+    <h1 class="report-title">ARMR SELF LEARNING ASSIGNMENT  2</h1>
+    <div class="meta-box">
+      <div class="meta-item"><strong>Name:</strong> Vedant Parimal Dave</div>
+      <div class="meta-item"><strong>SAP ID:</strong> 60017240057</div>
+      <div class="meta-item"><strong>Roll No.:</strong> A011</div>
+      <div class="meta-item"><strong>Batch:</strong> A1-1</div>
+      <div class="meta-item"><strong>Subject:</strong> Augmented Reality and Mixed Reality (DJS23ALH1501)</div>
+      <div class="meta-item"><strong>Target Outcomes:</strong> CO3 (Social AR), CO4 (Spatial Audio & Haptics)</div>
+    </div>
+  </header>
+
+  <!-- SECTION 1 -->
+  <section>
+    <h2>1. Project Objective & Multi-Sensory Architecture</h2>
+    <p>
+      The goal of this assignment is to develop interactive spatial interaction mechanics by building a face-tracked social AR experience (CO3) and engineering an architectural framework for a multi-sensory AR gaming prototype utilizing 3D spatial audio (HRTF) and tactile haptic feedback (CO4).
+    </p>
+    <p>
+      Human perception in Augmented Reality depends critically on multi-modal sensory binding: visual anchoring creates presence, Head-Related Transfer Functions (HRTF) provide natural spherical localization to guide player attention toward off-screen targets, and tactile vibration triggers deliver physical confirmation for touch and gaze interactions.
+    </p>
+  </section>
+
+  <!-- SECTION 2 -->
+  <section>
+    <h2>2. Part A — Interactive Face Tracking & Social AR Experience (CO3)</h2>
+    <h3>2.1 Facial Landmark Anchoring Mechanics</h3>
+    <p>
+      The social AR experience tracks 468 3D facial landmarks in real-time, executing responsive gesture recognition and procedural asset anchoring across three distinct anatomical regions:
+    </p>
+    <ul>
+      <li>
+        <strong>Forehead Anchor (3D Holographic Crown):</strong> Anchored to landmark index <code>10</code> (forehead center) with an offset vector <code>(0, +0.08m, 0)</code>. Orientation angles (Pitch, Yaw, Roll) are calculated to rotate the 3D crown synchronously with user head movements.
+      </li>
+      <li>
+        <strong>Eye Landmark Visor HUD & Blink Trigger:</strong> Anchored across landmarks <code>33</code>, <code>263</code>, and <code>168</code>. Eye Aspect Ratio (EAR) continuously monitors eyelid distance:
+        <div class="formula-box">
+          EAR = (||p159 - p145|| + ||p386 - p374||) / (2 * ||p263 - p33||)
+        </div>
+        When EAR falls below <code>0.022</code>, an eye blink event triggers a reticle color transition from neon cyan to glowing plasma magenta.
+      </li>
+      <li>
+        <strong>Mouth Openness Ratio & Plasma Energy Beam:</strong> Computed via Euclidean distance between upper inner lip (<code>13</code>) and lower inner lip (<code>14</code>). When openness exceeds <code>35%</code> of face height, a procedural plasma beam discharges with animated particle shockwaves, accompanied by spatial audio and haptic rumble.
+      </li>
+    </ul>
+
+    <h3>2.2 Viewport Constraints & Social Engagement Design</h3>
+    <ul>
+      <li><strong>Viewport Bounds in 9:16 Displays:</strong> Mobile screens restrict horizontal FoV. To prevent jarring pops when a user tilts their head out of view, linear interpolation (lerp) damping is applied to prevent asset clipping near boundaries.</li>
+      <li><strong>Micro-Interactions & Virality:</strong> The combination of natural facial gestures (mouth opening, winking, head nodding) turns the user's face into an intuitive controller, fostering high-engagement social sharing.</li>
+    </ul>
+  </section>
+
+  <div class="page-break"></div>
+
+  <!-- SECTION 3 -->
+  <section>
+    <h2>3. Part B — Spatial Audio & Haptics Architectural Design (CO4)</h2>
+
+    <h3>3.1 HRTF vs. Standard Stereo Panning Comparison</h3>
+    <p>
+      Standard stereo panning relies solely on amplitude scaling (Interaural Level Difference) along a 1D horizontal axis:
+    </p>
+    <div class="formula-box">
+      Gain_Left = cos( (π * (θ + 90°)) / 360° ), &nbsp;&nbsp; Gain_Right = sin( (π * (θ + 90°)) / 360° )
+    </div>
+    <p>
+      This model suffers from severe front-back ambiguity ("cone of confusion") and cannot render vertical elevation. It results in sounds feeling "inside the player's skull" (lateralization) rather than located in physical space.
+    </p>
+    <p>
+      In contrast, <strong>Head-Related Transfer Functions (HRTF)</strong> simulate complete 3D binaural acoustic diffraction around the listener’s head, torso, and external ear pinna:
+    </p>
+    <div class="formula-box">
+      y_Left(t) = x(t) * h_Left(θ, φ, d, t), &nbsp;&nbsp;&nbsp; y_Right(t) = x(t) * h_Right(θ, φ, d, t)
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Evaluation Parameter</th>
+          <th>Standard Stereo Panning</th>
+          <th>HRTF Binaural Spatial Audio</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Spatial Localization</strong></td>
+          <td>1D horizontal axis (left / right only).</td>
+          <td>True 3D spherical space (Azimuth, Elevation, Distance).</td>
+        </tr>
+        <tr>
+          <td><strong>Interaural Time Difference (ITD)</strong></td>
+          <td>Absent (0 ms phase shift).</td>
+          <td>Accurately synthesized (Δt up to 0.7 ms).</td>
+        </tr>
+        <tr>
+          <td><strong>Interaural Level Difference (ILD)</strong></td>
+          <td>Basic linear/sinusoidal gain balance.</td>
+          <td>Frequency-dependent acoustic head-shadow filtering.</td>
+        </tr>
+        <tr>
+          <td><strong>Spectral Pinna Cues</strong></td>
+          <td>None (flat frequency response).</td>
+          <td>Directional spectral notches (4–10 kHz) resolve front/back.</td>
+        </tr>
+        <tr>
+          <td><strong>Off-Screen Guidance Utility</strong></td>
+          <td>Fails; user cannot perceive if target is in front or behind.</td>
+          <td><strong>High;</strong> player instinctively turns toward sound origin.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>3.2 Unity Spatial Audio Off-Screen Guidance & Attenuation Model</h3>
+    <p>
+      In mobile AR, off-screen targets must be acoustically beaconed to guide player gaze back into the camera viewport. The system implements an inverse-distance attenuation curve:
+    </p>
+    <div class="formula-box">
+      Gain(d) = d_min / (d_min + α * (d - d_min)) &nbsp;&nbsp; [where d_min = 1.0m, d_max = 25.0m, α = 1.2]
+    </div>
+    <p>
+      Additionally, an <strong>Acoustic Head-Shadow Low-Pass Filter</strong> attenuates high frequencies when the target lies behind the player (|θ| > 90°):
+    </p>
+    <div class="formula-box">
+      f_cutoff(θ) = Lerp(22000 Hz, 2500 Hz, (|θ| / 180°)^1.5)
+    </div>
+    <p>
+      As the player rotates their head toward the target, the cutoff frequency opens up and beacon ping frequency increases, providing immediate intuitive biofeedback.
+    </p>
+
+    <h3>3.3 Tactile Vibration Feedback Matrix for Mobile AR</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Interaction State</th>
+          <th>Haptic Actuator Call</th>
+          <th>Duration</th>
+          <th>Amplitude</th>
+          <th>Perceptual Function</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Raycast Hover</strong></td>
+          <td><code>VibrationEffect.createOneShot(15, 60)</code></td>
+          <td>15 ms</td>
+          <td>24%</td>
+          <td>Subtle transient confirming crosshair entry on target.</td>
+        </tr>
+        <tr>
+          <td><strong>Target Lock-On</strong></td>
+          <td><code>VibrationEffect.createOneShot(40, 150)</code></td>
+          <td>40 ms</td>
+          <td>59%</td>
+          <td>Medium confirmatory pulse when gaze dwell completes.</td>
+        </tr>
+        <tr>
+          <td><strong>Mouth Blast Fire</strong></td>
+          <td><code>VibrationEffect.createOneShot(80, 255)</code></td>
+          <td>80 ms</td>
+          <td>100%</td>
+          <td>Heavy resonant impact reinforcing high-energy gesture.</td>
+        </tr>
+        <tr>
+          <td><strong>Off-Screen Alert</strong></td>
+          <td><code>createWaveform([0, 30, 50, 30], ...)</code></td>
+          <td>110 ms</td>
+          <td>Dynamic</td>
+          <td>Dual-pulse alerting player of off-screen objective.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SECTION 4 -->
+  <section>
+    <h2>4. Deliverables & Repository Structure</h2>
+    <ul>
+      <li><strong>Filter Project Package:</strong> <code>spark_ar_filter/FaceInteractionFilter.arexport</code> & fully executable WebAR application (<code>web_ar_filter/index.html</code>).</li>
+      <li><strong>Unity Engine Scripts:</strong> <code>SpatialAudioTargetGuide.cs</code>, <code>HapticFeedbackManager.cs</code>, <code>ARRaycastInteraction.cs</code>.</li>
+      <li><strong>Video Pitch Walkthrough Script:</strong> <code>VIDEO_PITCH_SCRIPT_AND_INSTRUCTIONS.md</code> (5-minute timed script).</li>
+      <li><strong>GitHub Repository:</strong> Step-by-step repository documentation ready for deployment.</li>
+    </ul>
+  </section>
+
+</body>
+</html>

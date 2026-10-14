@@ -1,0 +1,13 @@
+{
+  "manifestVersion": "1.0.0",
+  "projectName": "CyberFaceInteractionFilter",
+  "author": "Vedant Parimal Dave",
+  "targetEngine": "Meta Spark Studio v175+",
+  "capabilities": [
+    "faceTracking",
+    "audio",
+    "particleSystem",
+    "sceneScripting"
+  ],
+  "exportedPackage": true
+}

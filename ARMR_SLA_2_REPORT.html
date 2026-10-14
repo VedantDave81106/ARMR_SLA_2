@@ -16,8 +16,8 @@
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       color: #1e293b;
       background-color: #f1f5f9;
-      line-height: 1.38;
-      font-size: 8.5pt;
+      line-height: 1.44;
+      font-size: 8.8pt;
     }
 
     /* Print Setup */
@@ -99,23 +99,23 @@
 
     /* Document Main Title */
     .doc-title {
-      font-size: 16pt;
+      font-size: 16.5pt;
       font-weight: 800;
       text-align: center;
       color: #000000;
       text-transform: uppercase;
       letter-spacing: -0.3px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     /* Student Meta Box */
     .meta-box {
       border: 1px solid #cbd5e1;
-      border-radius: 4px;
-      padding: 6px 14px;
+      border-radius: 5px;
+      padding: 7px 16px;
       display: flex;
       justify-content: space-between;
-      font-size: 8.5pt;
+      font-size: 8.8pt;
       margin-bottom: 12px;
       background: #fafbfc;
     }
@@ -131,38 +131,38 @@
 
     /* Section Headings */
     .section-title {
-      font-size: 9.6pt;
+      font-size: 9.8pt;
       font-weight: 800;
       color: #000000;
       text-transform: uppercase;
       border-left: 3.5px solid #0070f3;
       padding-left: 8px;
-      margin-top: 9px;
-      margin-bottom: 5px;
+      margin-top: 11px;
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
     }
 
     p {
       color: #334155;
-      margin-bottom: 5px;
+      margin-bottom: 6px;
       text-align: justify;
-      font-size: 8.3pt;
-      line-height: 1.36;
+      font-size: 8.6pt;
+      line-height: 1.42;
     }
 
     ul {
       list-style-type: none;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     li {
       position: relative;
       padding-left: 14px;
-      margin-bottom: 3.5px;
+      margin-bottom: 4.5px;
       color: #334155;
-      font-size: 8.3pt;
-      line-height: 1.36;
+      font-size: 8.6pt;
+      line-height: 1.42;
     }
 
     li::before {
@@ -170,7 +170,7 @@
       position: absolute;
       left: 3px;
       color: #0070f3;
-      font-size: 10pt;
+      font-size: 10.5pt;
       line-height: 1;
     }
 
@@ -182,16 +182,16 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 6px 0 8px 0;
-      font-size: 7.7pt;
+      margin: 8px 0 10px 0;
+      font-size: 8pt;
     }
 
     th, td {
       border: 1px solid #cbd5e1;
-      padding: 3.5px 6px;
+      padding: 4.5px 7px;
       text-align: left;
       vertical-align: middle;
-      line-height: 1.3;
+      line-height: 1.34;
     }
 
     th {
@@ -213,74 +213,104 @@
     .formula-callout {
       background: #f1f7fe;
       border-left: 3px solid #0070f3;
-      padding: 3px 8px;
-      margin: 2px 0 4px 0;
+      padding: 4px 10px;
+      margin: 3px 0 6px 0;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 7.6pt;
+      font-size: 7.8pt;
       color: #0284c7;
       border-radius: 0 4px 4px 0;
     }
 
-    /* Screenshots Container - Completely Uncropped */
+    /* ========================================================
+       SCREENSHOTS: LARGE, HIGH-RESOLUTION & 100% VISIBLE
+       ======================================================== */
     .screenshot-group {
-      margin: 6px 0;
+      margin: 8px 0;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 12px;
     }
 
-    .screenshot-card {
-      border: 1.2px solid #0070f3;
-      border-radius: 4px;
-      padding: 3px;
+    .screenshot-card-hero {
+      border: 1.5px solid #0070f3;
+      border-radius: 6px;
+      padding: 5px;
       background: #ffffff;
       text-align: center;
-      box-shadow: 0 1px 4px rgba(0, 112, 243, 0.1);
+      box-shadow: 0 2px 8px rgba(0, 112, 243, 0.12);
     }
 
-    .screenshot-card img {
+    .screenshot-card-hero img {
       width: auto;
       max-width: 100%;
       height: auto;
-      max-height: 165px;
+      max-height: 265px; /* Maximum large size */
       object-fit: contain !important;
-      border-radius: 3px;
+      border-radius: 4px;
       display: block;
       margin: 0 auto;
     }
 
-    .screenshot-dual {
+    .screenshot-dual-large {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
+      gap: 12px;
     }
 
-    .screenshot-dual .screenshot-card img {
-      max-height: 115px;
+    .screenshot-card-sub {
+      border: 1.5px solid #0070f3;
+      border-radius: 6px;
+      padding: 6px;
+      background: #ffffff;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 112, 243, 0.12);
+    }
+
+    .screenshot-card-sub img {
+      width: auto;
+      max-width: 100%;
+      height: auto;
+      max-height: 230px; /* Big, crisp, and readable text! */
       object-fit: contain !important;
+      border-radius: 4px;
+      display: block;
+      margin: 0 auto;
     }
 
     .caption {
-      font-size: 7.1pt;
-      color: #475569;
-      margin-top: 3px;
+      font-size: 7.6pt;
+      color: #334155;
+      margin-top: 5px;
       text-align: center;
       font-weight: 600;
+    }
+
+    /* Code Block Box */
+    .code-box {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.4pt;
+      margin: 6px 0;
+      line-height: 1.35;
+      border: 1px solid #1e293b;
     }
 
     /* Footer */
     .page-footer {
       border-top: 1px solid #e2e8f0;
-      padding-top: 4px;
-      margin-top: 6px;
+      padding-top: 5px;
+      margin-top: 8px;
       display: flex;
       justify-content: space-between;
-      font-size: 7.2pt;
+      font-size: 7.4pt;
       color: #94a3b8;
     }
 
     .url-footer {
-      font-size: 6.8pt;
+      font-size: 7pt;
       color: #64748b;
       margin-top: 2px;
     }
@@ -289,12 +319,12 @@
 <body>
 
   <div class="print-toolbar no-print">
-    <span><strong>ARMR Self Learning Assignment 2 Report:</strong> Formatted to match Assignment 1 (Exact 3 Pages). Press <strong>Ctrl + P</strong> and select <em>"Save as PDF"</em>.</span>
-    <button class="btn-print" onclick="window.print()">Print to PDF (3 Pages)</button>
+    <span><strong>ARMR Self Learning Assignment 2 Report:</strong> High-Resolution 4-Page Submission. Press <strong>Ctrl + P</strong> and select <em>"Save as PDF"</em>.</span>
+    <button class="btn-print" onclick="window.print()">Print to PDF (4 Pages)</button>
   </div>
 
   <!-- ==========================================
-       PAGE 1 OF 3
+       PAGE 1 OF 4: SYSTEM OVERVIEW & PART A
        ========================================== -->
   <div class="page">
     <div class="page-content">
@@ -387,14 +417,14 @@
     <div>
       <div class="page-footer">
         <span>ARMR Self Learning Assignment 2 | Vedant Parimal Dave (60017240057)</span>
-        <span>Page 1 of 3</span>
+        <span>Page 1 of 4</span>
       </div>
       <div class="url-footer">https://vedantdave81106.github.io/ARMR_SLA_2/report.html</div>
     </div>
   </div>
 
   <!-- ==========================================
-       PAGE 2 OF 3
+       PAGE 2 OF 4: PART B — SPATIAL AUDIO & HAPTICS
        ========================================== -->
   <div class="page">
     <div class="page-content">
@@ -522,14 +552,14 @@
     <div>
       <div class="page-footer">
         <span>ARMR Self Learning Assignment 2 | Vedant Parimal Dave (60017240057)</span>
-        <span>Page 2 of 3</span>
+        <span>Page 2 of 4</span>
       </div>
       <div class="url-footer">https://vedantdave81106.github.io/ARMR_SLA_2/report.html</div>
     </div>
   </div>
 
   <!-- ==========================================
-       PAGE 3 OF 3
+       PAGE 3 OF 4: LARGE HIGH-RESOLUTION SCREENSHOTS
        ========================================== -->
   <div class="page">
     <div class="page-content">
@@ -541,31 +571,46 @@
       </ul>
 
       <!-- 10. LIVE DEMONSTRATION OUTPUT SCREENSHOTS -->
-      <div class="section-title">10. LIVE DEMONSTRATION OUTPUT SCREENSHOTS</div>
-      <p>Verified live camera capture and interactive system controls:</p>
+      <div class="section-title">10. LIVE DEMONSTRATION OUTPUT SCREENSHOTS (VERIFIED OUTPUT)</div>
+      <p>High-resolution captures of the live executed system showing facial landmark tracking, spatial audio radar, and interactive controls:</p>
 
       <div class="screenshot-group">
-        <!-- Figure 1: Full webcam capture -->
-        <div class="screenshot-card">
+        <!-- Figure 1: Full webcam capture (LARGE) -->
+        <div class="screenshot-card-hero">
           <img src="output1.png" alt="Live WebAR Face Tracking Demonstration">
-          <div class="caption">Figure 1: Live WebAR Face Tracking demonstration on webcam — 3D Cyber Crown anchored to forehead, Cyber Visor on eyes, and live 60 FPS HRTF spatial radar HUD.</div>
+          <div class="caption">Figure 1: Live WebAR Face Tracking demonstration on webcam — 3D Cyber Crown anchored to forehead, Cyber Visor over eyes, and live 60 FPS HRTF spatial radar HUD.</div>
         </div>
 
-        <!-- Figure 2: Side-by-side controls -->
-        <div class="screenshot-dual">
-          <div class="screenshot-card">
+        <!-- Figure 2: Side-by-side controls (LARGE & READABLE) -->
+        <div class="screenshot-dual-large">
+          <div class="screenshot-card-sub">
             <img src="output2.png" alt="Part A Controls">
             <div class="caption">Figure 2A: Part A Facial Anchor Controls & Orientation Matrix.</div>
           </div>
-          <div class="screenshot-card">
+          <div class="screenshot-card-sub">
             <img src="output3.png" alt="Part B Spatial Audio Controls">
             <div class="caption">Figure 2B: Part B HRTF 3D Spatial Audio & Distance Controls.</div>
           </div>
         </div>
       </div>
+    </div>
 
+    <div>
+      <div class="page-footer">
+        <span>ARMR Self Learning Assignment 2 | Vedant Parimal Dave (60017240057)</span>
+        <span>Page 3 of 4</span>
+      </div>
+      <div class="url-footer">https://vedantdave81106.github.io/ARMR_SLA_2/report.html</div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       PAGE 4 OF 4: VERIFICATION, CODE & CONCLUSION
+       ========================================== -->
+  <div class="page">
+    <div class="page-content">
       <!-- 11. INTERACTIVE FEATURES & VERIFICATION -->
-      <div class="section-title">11. INTERACTIVE FEATURES & VERIFICATION</div>
+      <div class="section-title">11. INTERACTIVE FEATURES & MULTI-SENSORY VERIFICATION</div>
       <ul>
         <li><strong>Real-Time 3D Landmark Anchoring:</strong> Forehead crown updates rotation smoothly based on real-time head roll, pitch, and yaw.</li>
         <li><strong>Blink & Mouth Gesture Detection:</strong> Eye aspect ratio triggers visor laser mode; mouth openness ratio (>35%) triggers plasma shockwave.</li>
@@ -573,28 +618,44 @@
         <li><strong>Tactile Actuator Visualizer:</strong> Real-time UI indicator mirrors mobile vibration motor states for desktop demonstration.</li>
       </ul>
 
-      <!-- 12. PROJECT SUBMISSION LINKS -->
-      <div class="section-title">12. PROJECT SUBMISSION LINKS</div>
+      <!-- 12. ARCHITECTURAL CODE IMPLEMENTATION -->
+      <div class="section-title">12. PRODUCTION ARCHITECTURAL CODE IMPLEMENTATION</div>
+      <p>C# Unity Spatial Audio beacon implementation with custom inverse-distance rolloff curves:</p>
+      <div class="code-box">
+// Unity Spatial Audio HRTF 3D Point-Source Guidance (Excerpt)
+audioSource.spatialize = true;
+audioSource.spatialBlend = 1.0f; // 100% 3D Binaural Spatialization
+AnimationCurve distanceCurve = new AnimationCurve();
+for (int i = 0; i &lt;= 25; i++) {
+    float d = Mathf.Lerp(minDistance, maxDistance, (float)i / 25);
+    float gain = minDistance / (minDistance + rolloffFactor * (d - minDistance));
+    distanceCurve.AddKey(d / maxDistance, Mathf.Clamp01(gain));
+}
+audioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, distanceCurve);
+      </div>
+
+      <!-- 13. PROJECT SUBMISSION LINKS -->
+      <div class="section-title">13. PROJECT SUBMISSION LINKS</div>
       <ul>
         <li><strong>Live Public WebAR Application:</strong> <a href="https://vedantdave81106.github.io/ARMR_SLA_2/" target="_blank" style="color:#0070f3; text-decoration:none;">https://vedantdave81106.github.io/ARMR_SLA_2/</a></li>
         <li><strong>GitHub Source Code:</strong> <a href="https://github.com/VedantDave81106/ARMR_SLA_2" target="_blank" style="color:#0070f3; text-decoration:none;">https://github.com/VedantDave81106/ARMR_SLA_2</a></li>
-        <li><strong>Exported Meta Spark Filter Package:</strong> <span style="font-family:'JetBrains Mono',monospace; font-size:7.6pt;">spark_ar_filter/FaceInteractionFilter.arexport</span></li>
-        <li><strong>Unity Spatial Audio & Haptics C# Scripts:</strong> <span style="font-family:'JetBrains Mono',monospace; font-size:7.6pt;">unity_spatial_audio_haptics/</span></li>
+        <li><strong>Exported Meta Spark Filter Package:</strong> <span style="font-family:'JetBrains Mono',monospace; font-size:7.8pt;">spark_ar_filter/FaceInteractionFilter.arexport</span></li>
+        <li><strong>Unity Spatial Audio & Haptics C# Scripts:</strong> <span style="font-family:'JetBrains Mono',monospace; font-size:7.8pt;">unity_spatial_audio_haptics/</span></li>
       </ul>
 
-      <!-- 13. CONCLUSION -->
-      <div class="section-title">13. CONCLUSION</div>
+      <!-- 14. CONCLUSION -->
+      <div class="section-title">14. CONCLUSION & COURSE OUTCOMES ACHIEVED</div>
       <ul>
-        <li>Successfully engineered an interactive face-tracked social AR experience (CO3) with procedural multi-point anchoring and gesture triggers.</li>
-        <li>Developed a robust spatial audio and haptic feedback architecture (CO4), quantitatively validating HRTF over stereo panning for 3D immersion.</li>
-        <li>Maintained a sustained 60 FPS execution on standard browser engines without external heavy plugin dependencies.</li>
+        <li><strong>CO3 Achieved:</strong> Successfully engineered an interactive face-tracked social AR experience with procedural multi-point anchoring and gesture triggers.</li>
+        <li><strong>CO4 Achieved:</strong> Developed a robust spatial audio and haptic feedback architecture, quantitatively validating HRTF over stereo panning for 3D immersion.</li>
+        <li><strong>Performance Benchmark:</strong> Maintained a sustained 60 FPS execution on standard browser engines without external heavy plugin dependencies.</li>
       </ul>
     </div>
 
     <div>
       <div class="page-footer">
         <span>ARMR Self Learning Assignment 2 | Vedant Parimal Dave (60017240057)</span>
-        <span>Page 3 of 3</span>
+        <span>Page 4 of 4</span>
       </div>
       <div class="url-footer">https://vedantdave81106.github.io/ARMR_SLA_2/report.html</div>
     </div>
